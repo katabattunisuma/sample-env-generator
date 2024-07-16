@@ -1,0 +1,37 @@
+name: Generate .env-sample
+
+on:
+  push:
+    paths:
+      - 'folder/.env'  # Trigger this action only when .env file is changed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Generate .env-sample
+      run: |
+        python generate_env_sample.py
+
+    - name: Commit .env-sample
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add folder/.env-sample
+        git commit -m "Update .env-sample file"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
