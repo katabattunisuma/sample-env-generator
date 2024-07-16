@@ -2,8 +2,8 @@ name: Generate .env-sample
 
 on:
   push:
-    paths:
-      - 'sample-env-generator/.env'
+    branches:
+      - main  # Change this to your default branch if it's not 'main'
 
 jobs:
   build:
