@@ -3,7 +3,7 @@ name: Generate .env-sample
 on:
   push:
     paths:
-      - 'sample-env-generator/.env'  # Trigger this action only when .env file is changed
+      - 'sample-env-generator/.env'
 
 jobs:
   build:
@@ -18,26 +18,32 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Debug - List files in directory
+    - name: List files in working directory
       run: ls -R
 
-    - name: Install dependencies
-      run: python -m pip install --upgrade pip
+    - name: Print current directory
+      run: pwd
 
-    - name: Debug - Print Python version
-      run: python --version
+    - name: List .github/workflows directory contents
+      run: ls -R .github/workflows
+
+    - name: List sample-env-generator directory contents
+      run: ls -R sample-env-generator
+
+    - name: Print contents of .env file
+      run: cat sample-env-generator/.env
 
     - name: Generate .env-sample
-      run: python sample-env-generator/generate_env_sample.py  # Ensure the path to the script is correct
+      run: python sample-env-generator/generate_env_sample.py
 
-    - name: Debug - Check .env-sample contents
-      run: cat folder/.env-sample
+    - name: Check .env-sample contents
+      run: cat sample-env-generator/.env-sample
 
     - name: Check for changes
       id: check_changes
       run: |
-        git add folder/.env-sample
-        git diff-index --quiet HEAD || echo "changes"
+        git add sample-env-generator/.env-sample
+        git diff --exit-code sample-env-generator/.env-sample || echo "changes"
 
     - name: Commit .env-sample
       if: steps.check_changes.outputs.changes == 'changes'
