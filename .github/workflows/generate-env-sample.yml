@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - main  # Change this to your default branch if it's not 'main'
-    paths:
-      - 'sample-env-generator/.env'  # Ensure this path is correct
 
 jobs:
   build:
@@ -17,6 +15,11 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -39,17 +42,10 @@ jobs:
       run: cat sample-env-generator/.env
 
     - name: Generate .env-sample
-      run: |
-        python sample-env-generator/generate_env_sample.py
-      continue-on-error: true
-
-    - name: Debug Python script execution
-      run: |
-        python --version
-        python -c "print('Hello from Python')"
+      run: python sample-env-generator/generate_env_sample.py
 
     - name: Check .env-sample contents
-      run: cat sample-env-generator/.env-sample || echo ".env-sample file not found"
+      run: cat sample-env-generator/.env-sample
 
     - name: Check for changes
       id: check_changes
