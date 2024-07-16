@@ -3,7 +3,7 @@ name: Generate .env-sample
 on:
   push:
     paths:
-      - 'folder/.env'  # Trigger this action only when .env file is changed
+      - 'sample-env-generator/.env'  # Trigger this action only when .env file is changed
 
 jobs:
   build:
