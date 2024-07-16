@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - main  # Change this to your default branch if it's not 'main'
+    paths:
+      - 'sample-env-generator/.env'  # Ensure this path is correct
 
 jobs:
   build:
@@ -37,10 +39,17 @@ jobs:
       run: cat sample-env-generator/.env
 
     - name: Generate .env-sample
-      run: python sample-env-generator/generate_env_sample.py
+      run: |
+        python sample-env-generator/generate_env_sample.py
+      continue-on-error: true
+
+    - name: Debug Python script execution
+      run: |
+        python --version
+        python -c "print('Hello from Python')"
 
     - name: Check .env-sample contents
-      run: cat sample-env-generator/.env-sample
+      run: cat sample-env-generator/.env-sample || echo ".env-sample file not found"
 
     - name: Check for changes
       id: check_changes
