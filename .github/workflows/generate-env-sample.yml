@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - main  # Change this to your default branch if it's not 'main'
+      - main  # Adapt to your needs
 
 jobs:
   build:
@@ -14,47 +14,33 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
+      uses: actions/checkout@latest  # Use the latest compatible version
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@latest  # Use the latest compatible version
       with:
         python-version: '3.x'
 
-    - name: List files in working directory
-      run: ls -R
+    - name: List files and directories for debugging
+      run: ls -laR
 
-    - name: Print current directory
+    - name: Print current working directory
       run: pwd
-
-    - name: List .github/workflows directory contents
-      run: ls -R .github/workflows
-
-    - name: List sample-env-generator directory contents
-      run: ls -R sample-env-generator
-
-    - name: Print contents of .env file
-      run: cat sample-env-generator/.env
 
     - name: Generate .env-sample
       run: python sample-env-generator/generate_env_sample.py
 
-    - name: Check .env-sample contents
+    - name: Show .env-sample contents for debugging
       run: cat sample-env-generator/.env-sample
 
     - name: Check for changes
       id: check_changes
       run: |
         git add sample-env-generator/.env-sample
-        git diff --exit-code sample-env-generator/.env-sample || echo "changes"
+        git diff --quiet || echo "::set-output name=changes::true"
 
     - name: Commit .env-sample
-      if: steps.check_changes.outputs.changes == 'changes'
+      if: steps.check_changes.outputs.changes == 'true'
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
